@@ -13,6 +13,7 @@ app.use(cors());
 app.post("/api/token", async(req, res) => {
     const { code, redirect_uri } = req.body;
     const authHeader = 'Basic ' + new Buffer.from(process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET).toString("base64");
+    console.log("Received token request: ");
 
     try {
         const response = await axios.post(
@@ -30,8 +31,10 @@ app.post("/api/token", async(req, res) => {
         );
 
         if (response.status !== 200) {
+            console.log("Throwing error")
             throw new Error({ message: response.error.message });
         } else {
+            console.log("Sending token")
             res.json(response.data);
         }
     } catch (error) {

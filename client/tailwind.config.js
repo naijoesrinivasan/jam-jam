@@ -12,7 +12,9 @@ export default {
                 mutedBlue: "#2a2958",
                 neonGreen: "#1DB954",
                 electricBlue: "#3A86FF",
-                vividMagenta: "#FF006E"
+                vividMagenta: "#FF006E",
+                wildBlack: "#202426",
+                wildGrey: "#8C8C88"
             }
         },
     },
