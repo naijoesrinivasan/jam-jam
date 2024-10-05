@@ -31,13 +31,13 @@ app.post("/api/token", async(req, res) => {
         );
 
         if (response.status !== 200) {
-            console.log("Throwing error")
             throw new Error({ message: response.error.message });
         } else {
             console.log("Sending token")
             res.json(response.data);
         }
     } catch (error) {
+        console.log("Throwing error from Express")
         res.status(500).json({ error: error.message });
     }
 });

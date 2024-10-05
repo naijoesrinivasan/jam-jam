@@ -2,22 +2,31 @@ import React from 'react'
 import { useLoaderData, redirect } from 'react-router-dom';
 
 export async function loader({ request }) {
-  localStorage.setItem("loggedIn", true);
+  // const loggedIn = localStorage.getItem("loggedIn");
+  // if(!loggedIn) {
+  //   return redirect('/login?message=User tried to access home without being logged in')
+  // }
+  console.log("Home Loader running...")
   const access_token = localStorage.getItem("access_token") || null;
 
   if(access_token)  {
+    console.log("Access token present in local storage")
     const userData = JSON.parse(localStorage.getItem("userData"));
     const userPlaylists = JSON.parse(localStorage.getItem("userPlaylists"));
     const userTracks = JSON.parse(localStorage.getItem("userTracks"));
 
     return { userData, userPlaylists, userTracks };
   }
-  console.log("In Home component. Requesting access token...");
+
+
   const url = new URL(request.url);
   const code = url.searchParams.get("code") || null;
+  const state = url.searchParams.get("state") || null;
+  console.log("State in home: ", state);
   const redirect_uri = 'http://localhost:5173/home';  
 
   if(code)  {
+      console.log("In Home component. Requesting access token...");
       try {
           const response = await fetch("http://localhost:3000/api/token", {
               method: "POST",
@@ -36,6 +45,7 @@ export async function loader({ request }) {
 
           const data = await response.json();
           localStorage.setItem("access_token", data.access_token);
+          localStorage.setItem("loggedIn", true);
 
           const userReponse = await fetch("https://api.spotify.com/v1/me", {
                                           headers: {
@@ -60,7 +70,7 @@ export async function loader({ request }) {
                                           }
           });
           const userTracks = await userTracksResponse.json();
-          console.log("Just fetched user tracks: ", userTracks)
+          // console.log("Just fetched user tracks: ", userTracks)
           localStorage.setItem("userTracks", JSON.stringify(userTracks));
 
           return { userData, userPlaylists, userTracks };
@@ -69,25 +79,25 @@ export async function loader({ request }) {
           throw err;
       } 
   }
-  else return redirect('/Login');
+  else return redirect('/login?message=no access token');
 }
 
 export default function Home() {
   const { userData, userPlaylists, userTracks } = useLoaderData();
-  console.log("Inside Home Component:");
-  console.log("User Data: ", userData);
+  // console.log("Inside Home Component:");
+  // console.log("User Data: ", userData);
   console.log("User Playlists: ", userPlaylists);
-  console.log("User tracks: ", userTracks)
+  // console.log("User tracks: ", userTracks)
 
   const playlists = userPlaylists.items;
 
   return (
-    <main className='p-10 max-h-full gap-2 row-span-11 grid grid-rows-11 overflow-scroll border'>
-      <section className='row-span-1 text-center border'>
+    <main className='row-span-11 p-10 gap-2 w-full flex flex-col border'>
+      <section className='text-center border w-full'>
         <p className=''>Hello {userData.display_name}</p>
-        <img src={userData.images.url} alt="" className='border'/>
+        <img src={userData.images?.url} alt="" className=''/>
       </section>
-      <section className='row-span-10 flex flex-wrap justify-between items-center gap-10'>
+      <section className='flex flex-1 flex-shrink-0 flex-wrap justify-center items-center gap-10 max-w-full overflow-y-auto'>
         { playlists && playlists.map(playlist => {
             return (
               <div className='w-[300px]' key={playlist.id}>

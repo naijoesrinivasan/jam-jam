@@ -6,7 +6,10 @@ export default function Header()  {
 
   function handleLogout() {
     localStorage.clear();
-    navigate('/login');
+    console.log("Cleared tokens...")
+  
+  // After Spotify logout, redirect back to your login page
+    navigate('/login?message=user has logged out');
   }
 
   function getHome()  {

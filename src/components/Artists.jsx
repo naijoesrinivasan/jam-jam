@@ -2,6 +2,7 @@ import React from 'react';
 import { useLoaderData } from 'react-router-dom';
 
 export async function loader({ request })  {
+  console.log("Artists Loader running...")
   const artistData = JSON.parse(localStorage.getItem("artistData")) || null;
   if(artistData)  {
     console.log("Returning from local storage")
@@ -23,10 +24,10 @@ export default function Artists() {
   const artistData = useLoaderData();
 
   return (
-    <main className="p-5 max-h-full row-span-10 grid grid-rows-11 place-items-center overflow-scroll ">
+    <main className="p-5 max-h-full row-span-10 grid grid-rows-11 place-items-center ">
       <h1 className="row-span-1">Artists page</h1>
       {artistData && 
-      <div className="flex flex-row row-span-11 justify-center gap-10 flex-wrap  h-full overflow-scroll">
+      <div className="flex flex-row row-span-11 justify-center gap-10 flex-wrap  h-full overflow-auto">
         { artistData.map(item => 
           <div key={item.id} className="w-[300px]">
             <img src={`${item.images[1].url}`} className="rounded-xl mb-2"></img>
