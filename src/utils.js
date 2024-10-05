@@ -1,11 +1,11 @@
 export async function auth() {
     console.log("Auth function running...")
-    const loggedIn = localStorage.getItem("loggedIn");
+    const access_token = localStorage.getItem("access_token");
 
-    if (!loggedIn) {
+    if (!access_token) {
         throw {
-            message: "user is not logged in"
+            message: "user does not have an access token"
         }
     }
-    return loggedIn;
+    return access_token;
 }

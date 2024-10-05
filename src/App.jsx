@@ -1,7 +1,6 @@
 import { createBrowserRouter, redirect, RouterProvider } from "react-router-dom"
 import HomeLayout from "./layouts/HomeLayout"
 import Songs, { loader as songsLoader } from "./components/Songs"
-import { auth } from "./utils"
 import Login, { loader as loginLoader } from "./pages/Login"
 import Home, { loader as homeLoader } from "./pages/Home"
 import Artists, { loader as artistsLoader } from "./components/Artists"
@@ -16,19 +15,21 @@ export default function App() {
       element: <HomeLayout />,
       loader: async () => {
         console.log("HomeLayout Loader running...")
-        try{
-          const response = await auth();
-          console.log("Auth allowed: ", response);
-          return null;
-        } catch(err) {
-          console.log("Error: ", err);
-          return redirect(`/login?message=${err.message}`)
-        }
+        const accessToken = localStorage.getItem('access_token')
+        console.log("found access token in home layout loader")
+
+        if (accessToken)
+          return accessToken
+        return redirect('/login?message=access token not found')
       },
       children: [
         {
-          path: "home",
           index: true,
+          element: <Home />,
+          loader: homeLoader
+        },
+        {
+          path: "home",
           element: <Home />,
           loader: homeLoader
         },

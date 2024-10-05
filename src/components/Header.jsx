@@ -13,7 +13,7 @@ export default function Header()  {
   }
 
   function getHome()  {
-    navigate("/home");
+    navigate("/");
   }
 
   function getSongs() {
