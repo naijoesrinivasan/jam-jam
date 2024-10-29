@@ -2,18 +2,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
     html,
     body {
-        @apply font-sans h-screen w-screen bg-[#202426]
+        @apply font-sans bg-[url('/modern-light-bg.jpg')] h-screen overflow-hidden 
+    }
+    h1 {
+        @apply text-white
+    }                            
+    h2 {
+        @apply text-white
+    }
+    p {
+        @apply text-white
+    }
+    li {
+        @apply text-secondaryWhite
+    }
+    #root {
+        @apply h-full overflow-hidden
     }
 }
+                                                                
+.login-gradient {
+    background: linear-gradient(120deg, white, green, red, blue, purple);
+}
+                                                                
+::-webkit-scrollbar {
+    height: 8px;
+}
 
-
-/* html,
-body {
-    height: 100vh;
-    max-width: 100vw;
-    max-height: 100vh;
-    background: #202426;
-} */
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+}

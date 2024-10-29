@@ -15,11 +15,9 @@ function TriangularBar(props)  {
   return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
 }
 export default function AudioFeatures() {
-  const audioFeatures = useOutletContext()
+  const { audioFeatures } = useOutletContext()
   const audioFeaturesArr = [audioFeatures]
-  console.log("Audio array: ", audioFeaturesArr)
-  console.log("Audio features component...")
-  console.log(audioFeatures)
+
   return (
     <section className='mt-4 flex justify-center'>
     {/* <ResponsiveContainer width={800} height="80%"> */}

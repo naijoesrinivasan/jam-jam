@@ -1,43 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import { redirect, useLoaderData, useSearchParams } from 'react-router-dom';
-
-export async function loader()  {
-  console.log("Login Loader running...")
-  let accessToken = localStorage.getItem("access_token") || '';
-
-  if (accessToken !== '') {
-    console.log("User has access token: ", accessToken)
-    return redirect('/');
-  }
-  console.log("No access token. Sending request")
-  const response = await fetch('/auth/token')
-  const json = await response.json()
-  accessToken = json.access_token
-  localStorage.setItem("access_token", accessToken)
-
-  return accessToken;
-}
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { slideFromTop, slideFromBottom } from '../motionVariants';
 
 export default function Login() {
-  const accessToken = useLoaderData();
-  const [message, setMessage] = useSearchParams();
-  console.log(message.get('message'))
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const ref = useRef(null)
+
+  useEffect(() => {
+    async function getToken() {
+      if(searchParams.get('message') === 'token')
+        navigate('/');
+      if (searchParams.get('message') === 'no_access_token') {
+        const response = await fetch('/auth/token')
+        const data = await response.json()
+        localStorage.setItem('accessToken', data.access_token)
+        console.log("Token: ", data.access_token)
+
+        navigate('/');
+      }
+    }
+
+    getToken()
+  }, [navigate, searchParams])
 
   return (
-    <main className='row-span-12 bg-wildBlack text-wildGrey flex flex-col items-center p-20 lg:p-[320px] gap-4'>
-      <h2>Discover Your Music Universe</h2>
-      <p>Welcome to your personalized music hub, where your eclectic taste finds its perfect companion. 
-      Whether you're vibing to classic rock, immersing in hip-hop beats, or diving into indie and experimental sounds, 
-      this platform brings all your Spotify data to life. Seamlessly connect your Spotify account to view your profile, 
-      explore playlists, and dive deeper into your unique music journey.
-      </p>
-      <p>Music is more than just sound—it's an experience. Let's explore yours.</p>
-      { message && <span className='text-[#A64B29] text-sm'>{message}</span>   }
-      <a href='/auth/login'>
-        <button className='mt-4 rounded-xl w-40 h-12 bg-[#6C733D] p-2 hover:bg-[#9DA65D] hover:text-white'>
-          Log In
-        </button>
-      </a>
+    <main
+      className='relative h-full bg-cover flex-shrink-0 flex justify-center  p-10'
+      ref={ref}
+    >
+      <motion.img
+        src="/astro.png"
+        alt=""
+        className='absolute -bottom-2 left-0 w-[660px] h-auto z-10'
+        variants={slideFromBottom}
+        initial="hidden"
+        animate="visible"
+      />
+      <div className="rounded-lg shadow-2xl z-20 h-fit flex flex-col bg-primaryBlack border border-opacity-10 hover:border">
+        <a href='/auth/login' className='cursor-pointer flex flex-row justify-center items-center p-2'>
+          <img src="/spotifyGreenIcon.png" alt="" width={40} />
+          <button className='rounded-xl w-full h-12 p-2 hover:backdrop-blur-none text-primaryWhite font-bold'>
+            Connect With Spotify
+          </button>
+        </a>
+      </div>
     </main>
   )
 }

@@ -3,7 +3,7 @@ const dotenv = require('dotenv')
 const request = require('request')
 const cors = require('cors')
 
-dotenv.config()
+dotenv.config({ path: '.env.local' })
 
 global.access_token = ''
 function generateRandomString(length) {
@@ -23,12 +23,8 @@ const spotify_redirect_uri = "http://localhost:5173/auth/callback"
 
 const app = express()
 
-// app.use(cors({
-//   origin: ["http://localhost:5173"],
-//   methods: ['GET', 'PUT', 'POST']
-// }))
-
 app.get('/auth/login', (req, res) => {
+  console.log("Received login request")
   const scope = "streaming user-read-email user-read-private user-top-read playlist-read-private playlist-read-collaborative user-library-read user-read-playback-state user-modify-playback-state user-read-currently-playing"
   const state = generateRandomString(16)
 
@@ -45,6 +41,8 @@ app.get('/auth/login', (req, res) => {
 
 app.get('/auth/callback', (req, res) => {
   const code = req.query.code
+
+  console.log("Received code: ", code)
 
   const options = {
     url: 'https://accounts.spotify.com/api/token',
@@ -63,7 +61,7 @@ app.get('/auth/callback', (req, res) => {
   request.post(options, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       access_token = body.access_token;
-      res.redirect('/')
+      res.redirect(`/login?message=token`)
     }
   })
 })
